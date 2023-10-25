@@ -1,81 +1,65 @@
 #include "sort.h"
-#include <stdio.h>
+
 /**
- * number_sw - function to swap nums
- * @ay: array inp
- * @f: ind num one
- * @d: ind num tow
- * Return: void
+ * swap - Swaps two integers in an array
+ * @a: First integer
+ * @b: Second integer
  */
-void number_sw(int *ay, int f, int d)
+void swap(int *a, int *b)
 {
-	ay[f] = ay[f] + ay[d];
-	ay[d] = ay[f] - ay[d];
-	ay[f] = ay[f] - ay[d];
+	int temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
 /**
- * hp_rc_func - build max tree is heap
- * @arr: array ind
- * @i: number of ind
- * @sz: array lenght
- * @tml: array limit
- * Return: void
+ * sift_down - Performs sift-down operation on a heap node
+ * @array: Array representing the heap
+ * @size: Size of the heap
+ * @index: Index of the node to sift down
+ * @heap_size: Size of the current heap being worked on
  */
-void hp_rc_func(int *arr, int i, size_t sz, int tml)
+void sift_down(int *array, size_t size, size_t index, size_t heap_size)
 {
-	int bg;
-	int f3;
+	size_t largest = index;
+	size_t left = 2 * index + 1;
+	size_t right = 2 * index + 2;
 
-	f3 = i * 2;
+	if (left < heap_size && array[left] > array[largest])
+		largest = left;
 
-	if (f3 + 2 < tml)
+	if (right < heap_size && array[right] > array[largest])
+		largest = right;
+
+	if (largest != index)
 	{
-		hp_rc_func(arr, f3 + 1, sz, tml);
-		hp_rc_func(arr, f3 + 2, sz, tml);
-	}
-
-	if (f3 + 1 >= tml)
-		return;
-
-	if (f3 + 2 < tml)
-		bg = (arr[f3 + 1] > arr[f3 + 2]) ? (f3 + 1) : (f3 + 2);
-	else
-		bg = f3 + 1;
-
-	if (arr[i] < arr[bg])
-	{
-		number_sw(arr, i, bg);
-		print_array(arr, sz);
-		hp_rc_func(arr, bg, sz, tml);
+		swap(&array[index], &array[largest]);
+		print_array(array, size);
+		sift_down(array, size, largest, heap_size);
 	}
 }
 
 /**
- * heap_sort - sorts an array of integers in ascending..
- * @array: input array
- * @size: size of the array
- * amine mohamed and salma abzou
+ * heap_sort - Sorts an array of integers in ascending order using Heap sort
+ * @array: Array to be sorted
+ * @size: Size of the array
  */
 void heap_sort(int *array, size_t size)
 {
-	int i;
-	size_t tml;
+	size_t i;
 
-	if (!array || size == 0)
+	if (!array || size < 2)
 		return;
 
-	i = 0;
-	tml = size;
-
-	while (tml > 1)
+	for (i = size / 2; i != 0; i--)
 	{
-		hp_rc_func(array, i, size, tml);
-		if (array[i] >= array[tml - 1])
-		{
-			number_sw(array, i, tml - 1);
-			print_array(array, size);
-		}
-			tml--;
+		sift_down(array, size, i - 1, size);
+	}
+
+	for (i = size; i > 1; i--)
+	{
+		swap(&array[0], &array[i - 1]);
+		print_array(array, size);
+		sift_down(array, size, 0, i - 1);
 	}
 }
